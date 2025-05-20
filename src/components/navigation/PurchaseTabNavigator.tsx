@@ -6,13 +6,14 @@ import { PurchaseOrderFormScreen } from "../../screens/purchase/PurchaseOrderFor
 import { SupplierListScreen } from "../../screens/purchase/SupplierListScreen";
 import { SupplierDetailScreen } from "../../screens/purchase/SupplierDetailScreen";
 import { SupplierAnalyticsScreen } from "../../screens/purchase/SupplierAnalyticsScreen";
+import { RouteProp } from "@react-navigation/core";
 
 const StackNavigator = stackNavigatorFactory();
 
 export type PurchaseStackParamList = {
   PurchaseOrderList: undefined;
   PurchaseOrderDetail: { orderId: string };
-  PurchaseOrderForm: { orderId?: string };
+  PurchaseOrderForm: { orderId?: string; supplierId?: string };
   SupplierList: undefined;
   SupplierDetail: { supplierId: string };
   SupplierAnalytics: { supplierId: string };
@@ -45,7 +46,7 @@ export const PurchaseTabNavigator = () => (
     <StackNavigator.Screen 
       name="PurchaseOrderForm" 
       component={PurchaseOrderFormScreen}
-      options={({ route }) => ({
+      options={({ route }: { route: RouteProp<PurchaseStackParamList, "PurchaseOrderForm"> }) => ({
         title: route.params?.orderId ? "Edit Order" : "New Order",
       })}
     />

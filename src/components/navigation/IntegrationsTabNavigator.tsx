@@ -10,7 +10,7 @@ const StackNavigator = stackNavigatorFactory();
 export type IntegrationsStackParamList = {
   IntegrationList: undefined;
   IntegrationDetail: { integrationId: string };
-  IntegrationSetup: { platform: string };
+  IntegrationSetup: { integrationId?: string; platform?: string };
   IntegrationSync: { integrationId: string };
 };
 

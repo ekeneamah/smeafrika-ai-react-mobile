@@ -13,6 +13,7 @@ registerElement("image", () => require("@nativescript/core").Image);
 registerElement("flexboxLayout", () => require("@nativescript/core").FlexboxLayout);
 registerElement("absoluteLayout", () => require("@nativescript/core").AbsoluteLayout);
 registerElement("dropDown", () => require("nativescript-drop-down").DropDown);
+registerElement("switch", () => require("@nativescript/core").Switch);
 
 function withGridProps<P extends object>(tagName: string): React.FC<P & {
   col?: string | number;
@@ -78,10 +79,35 @@ export const ProgressBar = withGridProps<{ value: number; maxValue: number; colo
 export const GridLayout = withGridProps<{ columns: string; rows?: string }>("gridLayout");
 export const StackLayout = withGridProps<{}>("stackLayout");
 export const ScrollView = withGridProps<{}>("scrollView");
-export const Button = withGridProps<{ text: string }>("button");
-export const TextField = withGridProps<{ text?: string; hint?: string }>("textField");
+export const Button = withGridProps<{ 
+  text: string;
+  isEnabled?: boolean;
+}>("button");
+export const TextField = withGridProps<{ 
+  text?: string; 
+  hint?: string;
+  onTextChange?: (e: { value: string }) => void;
+  keyboardType?: string;
+  autocorrect?: boolean;
+  autocapitalizationType?: string;
+  secure?: boolean;
+}>("textField");
 export const Image = withGridProps<{ src?: string }>("image");
-export const FlexboxLayout = withGridProps<{ flexDirection?: string }>("flexboxLayout");
+export const FlexboxLayout = withGridProps<{ 
+  flexDirection?: string;
+  flexWrap?: string;
+}>("flexboxLayout");
 export const AbsoluteLayout = withGridProps<{}>("absoluteLayout");
-export const DropDown = withGridProps<{ items: string[]; selectedIndex: number; onSelectedIndexChanged: (e: any) => void }>("dropDown");
+export const DropDown = withGridProps<{ 
+  items: string[]; 
+  selectedIndex: number; 
+  onSelectedIndexChanged: (e: any) => void;
+  hint?: string;
+  showClearButton?: boolean;
+  isEnabled?: boolean;
+}>("dropDown");
 export const View = withGridProps<{}>("view");
+export const Switch = withGridProps<{
+  checked: boolean;
+  onCheckedChange: (e: { value: boolean }) => void;
+}>("switch");

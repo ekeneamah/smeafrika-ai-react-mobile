@@ -14,6 +14,7 @@ export type ExpensesStackParamList = {
   ExpenseForm: { expenseId?: string };
   ExpenseCategories: undefined;
   ExpenseReports: undefined;
+  ExpenseDetails: { expenseId: string };
 };
 
 export const ExpensesTabNavigator = () => (
@@ -43,7 +44,11 @@ export const ExpensesTabNavigator = () => (
     <StackNavigator.Screen 
       name="ExpenseForm" 
       component={ExpenseFormScreen}
-      options={({ route }) => ({
+      options={({
+        route,
+      }: {
+        route: { params?: { expenseId?: string } };
+      }) => ({
         title: route.params?.expenseId ? "Edit Expense" : "New Expense",
       })}
     />

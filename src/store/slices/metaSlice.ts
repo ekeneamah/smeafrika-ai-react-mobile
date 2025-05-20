@@ -13,9 +13,26 @@ interface Product {
   price: number;
 }
 
+interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  status: string;
+}
+
+interface Service {
+  id: string;
+  name: string;
+  duration: number;
+  price: number;
+}
+
 interface MetaState {
   suppliers: Supplier[];
   products: Product[];
+  customers: Customer[];
+  services: Service[];
   isLoading: boolean;
   error: string | null;
 }
@@ -23,6 +40,8 @@ interface MetaState {
 const initialState: MetaState = {
   suppliers: [],
   products: [],
+  customers: [],
+  services: [],
   isLoading: false,
   error: null,
 };
@@ -55,6 +74,22 @@ export const fetchProducts = createAsyncThunk('meta/fetchProducts', async (_, { 
   }
 });
 
+export const fetchCustomers = createAsyncThunk(
+  'meta/fetchCustomers',
+  async () => {
+    // TODO: Implement API call
+    return [];
+  }
+);
+
+export const fetchServices = createAsyncThunk(
+  'meta/fetchServices',
+  async () => {
+    // TODO: Implement API call
+    return [];
+  }
+);
+
 const metaSlice = createSlice({
   name: 'meta',
   initialState,
@@ -86,6 +121,14 @@ const metaSlice = createSlice({
       .addCase(fetchProducts.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      // Customers
+      .addCase(fetchCustomers.fulfilled, (state, action) => {
+        state.customers = action.payload;
+      })
+      // Services
+      .addCase(fetchServices.fulfilled, (state, action) => {
+        state.services = action.payload;
       });
   },
 });

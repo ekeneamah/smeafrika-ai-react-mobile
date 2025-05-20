@@ -2,58 +2,58 @@ import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProp } from '@react-navigation/core';
 import { FrameNavigationProp } from "react-nativescript-navigation";
-import { PurchaseStackParamList } from "../../components/navigation/PurchaseTabNavigator";
+import { BookingsStackParamList } from "../../components/navigation/BookingsTabNavigator";
 import { SwipeUpPanel } from "../../components/common/SwipeUpPanel";
 import { ScrollView, StackLayout, GridLayout, Label, Button } from "../../components/native/nativeElements";
 import { RootState } from "../../store/store";
 import { colors } from "../../theme/colors";
-import { fetchOrders, deleteOrder } from "../../store/slices/purchaseSlice";
+import { fetchBookings, deleteBooking } from "../../store/slices/bookingSlice";
 import { Dialogs } from "@nativescript/core";
 
-export const PurchaseOrderListScreen = ({ navigation }: {
-  route: RouteProp<PurchaseStackParamList, "PurchaseOrderList">,
-  navigation: FrameNavigationProp<PurchaseStackParamList, "PurchaseOrderList">
+export const BookingListScreen = ({ navigation }: {
+  route: RouteProp<BookingsStackParamList, "BookingList">,
+  navigation: FrameNavigationProp<BookingsStackParamList, "BookingList">
 }) => {
   const dispatch = useDispatch();
-  const { orders, isLoading, error } = useSelector((state: RootState) => state.purchase);
+  const { bookings, isLoading, error } = useSelector((state: RootState) => state.bookings);
   const [filterOpen, setFilterOpen] = React.useState(false);
   const [searchText, setSearchText] = React.useState('');
   const [viewMode, setViewMode] = React.useState<'list' | 'grid'>('list');
   const [currentPage, setCurrentPage] = React.useState(1);
 
   React.useEffect(() => {
-    dispatch(fetchOrders(currentPage) as any);
+    dispatch(fetchBookings(currentPage) as any);
   }, [dispatch, currentPage]);
 
-  const filteredOrders = orders.filter(order =>
-    order.id.toLowerCase().includes(searchText.toLowerCase()) ||
-    order.supplierId.toLowerCase().includes(searchText.toLowerCase())
+  const filteredBookings = bookings.filter(booking =>
+    booking.id.toLowerCase().includes(searchText.toLowerCase()) ||
+    booking.customerName.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const handleDeleteOrder = async (orderId: string) => {
+  const handleDeleteBooking = async (bookingId: string) => {
     const confirmed = await Dialogs.confirm({
       title: "Confirm Delete",
-      message: "Are you sure you want to delete this order?",
+      message: "Are you sure you want to delete this booking?",
       okButtonText: "Delete",
       cancelButtonText: "Cancel"
     });
     if (!confirmed) return;
     try {
-      await dispatch(deleteOrder(orderId) as any).unwrap();
+      await dispatch(deleteBooking(bookingId) as any).unwrap();
     } catch (error) {
-      Dialogs.alert({ title: "Error", message: "Failed to delete order.", okButtonText: "OK" });
+      Dialogs.alert({ title: "Error", message: "Failed to delete booking.", okButtonText: "OK" });
     }
   };
 
   if (isLoading) {
-    return <Label className="text-center mt-4">Loading purchase orders...</Label>;
+    return <Label className="text-center mt-4">Loading bookings...</Label>;
   }
 
   return (
     <GridLayout columns="*" rows="auto, auto, *, auto" className="bg-background">
       <StackLayout row={0} className="p-4">
         <searchBar 
-          hint="Search orders..." 
+          hint="Search bookings..." 
           text={searchText} 
           onTextChange={(e) => setSearchText(e.value)}
           className="form-input"
@@ -69,37 +69,38 @@ export const PurchaseOrderListScreen = ({ navigation }: {
         />
 
         <Label col={1} className="text-subtitle ml-2 text-center">
-          {filteredOrders.length} Orders
+          {filteredBookings.length} Bookings
         </Label>
 
-      <segmentedBar 
-  col={2}
-  selectedIndex={viewMode === 'list' ? 0 : 1}
-  className="w-24"
-  selectedBackgroundColor={colors.primary}
-  onSelectedIndexChange={(e) => {
-    const index = (e.object as any).selectedIndex;
-    setViewMode(index === 0 ? 'list' : 'grid');
-  }}
->
-  <segmentedBarItem title="List" />
-  <segmentedBarItem title="Grid" />
-</segmentedBar>
-
+        <segmentedBar 
+          col={2}
+          selectedIndex={viewMode === 'list' ? 0 : 1}
+          className="w-24"
+          selectedBackgroundColor={colors.primary}
+          onSelectedIndexChange={(e) => {
+            const index = (e.object as any).selectedIndex;
+            setViewMode(index === 0 ? 'list' : 'grid');
+          }}
+        >
+          <segmentedBarItem title="List" />
+          <segmentedBarItem title="Grid" />
+        </segmentedBar>
       </GridLayout>
 
       <ScrollView row={2} className="p-2">
         <StackLayout>
-          {filteredOrders.map(order => (
-            <StackLayout key={order.id} className="card swipe-item" onTap={() => navigation.navigate("PurchaseOrderDetail", { orderId: order.id })}>
+          {filteredBookings.map(booking => (
+            <StackLayout key={booking.id} className="card swipe-item" onTap={() => navigation.navigate("BookingDetail", { bookingId: booking.id })}>
               <GridLayout columns="*, auto" rows="auto, auto, auto">
-                <Label col={0} row={0} className="text-subtitle">#{order.id}</Label>
-                <Label col={1} row={0} className={`text-${order.status === 'delivered' ? 'success' : order.status === 'pending' ? 'warning' : 'primary'}`}>{order.status}</Label>
-                <Label col={0} row={1} className="text-body">Supplier: {order.supplierId}</Label>
-                <Label col={1} row={1} className="text-body">${order.totalAmount.toFixed(2)}</Label>
-                <Label col={0} row={2} className="text-body text-secondary">Due: {order.deliveryDate}</Label>
+                <Label col={0} row={0} className="text-subtitle">#{booking.id}</Label>
+                <Label col={1} row={0} className={`text-${booking.status === 'confirmed' ? 'success' : booking.status === 'pending' ? 'warning' : 'primary'}`}>
+                  {booking.status}
+                </Label>
+                <Label col={0} row={1} className="text-body">Customer: {booking.customerName}</Label>
+                <Label col={1} row={1} className="text-body">${booking.totalAmount.toFixed(2)}</Label>
+                <Label col={0} row={2} className="text-body text-secondary">Date: {booking.date}</Label>
               </GridLayout>
-              <Button text="Delete" className="text-error text-sm mt-1" onTap={() => handleDeleteOrder(order.id)} />
+              <Button text="Delete" className="text-error text-sm mt-1" onTap={() => handleDeleteBooking(booking.id)} />
             </StackLayout>
           ))}
         </StackLayout>
@@ -111,12 +112,12 @@ export const PurchaseOrderListScreen = ({ navigation }: {
         <Button col={2} text="Next" className="btn-outline" onTap={() => setCurrentPage(p => p + 1)} />
       </GridLayout>
 
-      <Button text="+" className="fab" onTap={() => navigation.navigate({ name: "PurchaseOrderForm", params: {} })} />
+      <Button text="+" className="fab" onTap={() => navigation.navigate("BookingForm", { customerId: undefined })} />
 
       <SwipeUpPanel
         visible={filterOpen}
         onClose={() => setFilterOpen(false)}
-        title="Filter Orders"
+        title="Filter Bookings"
       >
         <StackLayout className="p-4">
           <StackLayout className="mb-4">
@@ -124,7 +125,7 @@ export const PurchaseOrderListScreen = ({ navigation }: {
             <segmentedBar selectedIndex={0} className="mb-2">
               <segmentedBarItem title="All" />
               <segmentedBarItem title="Pending" />
-              <segmentedBarItem title="Delivered" />
+              <segmentedBarItem title="Confirmed" />
             </segmentedBar>
           </StackLayout>
 
@@ -132,8 +133,8 @@ export const PurchaseOrderListScreen = ({ navigation }: {
             <Label className="form-label">Date Range</Label>
             <segmentedBar selectedIndex={0} className="mb-2">
               <segmentedBarItem title="All" />
+              <segmentedBarItem title="This Week" />
               <segmentedBarItem title="This Month" />
-              <segmentedBarItem title="Last Month" />
             </segmentedBar>
           </StackLayout>
 

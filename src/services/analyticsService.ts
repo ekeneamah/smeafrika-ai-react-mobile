@@ -2,6 +2,35 @@ import { AnalyticsData, AnalyticsFilter } from '../types/Analytics';
 
 // This would be connected to your API in a real app
 export const analyticsService = {
+
+    fetchSupplierAnalytics: async (supplierId: string, timeRange: string) => {
+    // Replace this with actual API call if needed
+    return await new Promise((resolve) =>
+      setTimeout(() => {
+        resolve({
+          totalOrders: 25,
+          totalValue: 45250,
+          avgOrderValue: 1810,
+          activeOrders: 8,
+          onTimeDeliveryRate: 98,
+          qualityRating: 4.8,
+          responseTime: 85,
+          topProducts: [
+            { name: 'Wireless Earbuds', totalValue: 12500, units: 250 },
+            { name: 'Smart Watches', totalValue: 10000, units: 100 },
+            { name: 'Bluetooth Speakers', totalValue: 8000, units: 100 },
+          ],
+          issues: {
+            quality: 3,
+            lateDeliveries: 2,
+            returnRate: 1.2,
+            returnValue: 520,
+          },
+        });
+      }, 1000)
+    );
+  },
+
   async fetchAnalyticsData(filter: AnalyticsFilter) {
     // Simulate API call
     return new Promise<{

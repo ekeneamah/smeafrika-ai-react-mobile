@@ -1,5 +1,6 @@
+import * as React from "react";
 import { Color } from "@nativescript/core";
-import { bottomTabsNavigatorFactory } from "react-nativescript-navigation";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MediaTabNavigator } from "./MediaTabNavigator";
 import { StoreTabNavigator } from "./StoreTabNavigator";
 import { AnalyticsTabNavigator } from "./AnalyticsTabNavigator";
@@ -12,8 +13,9 @@ import { ExpensesTabNavigator } from "./ExpensesTabNavigator";
 import { KnowledgeTabNavigator } from "./KnowledgeTabNavigator";
 import { PurchaseTabNavigator } from "./PurchaseTabNavigator";
 import { colors } from "../../theme/colors";
+import { Label } from "../../components/native/nativeElements";
 
-const BottomTabNavigator = bottomTabsNavigatorFactory();
+const BottomTabNavigator = createBottomTabNavigator();
 
 export type MainTabsParamList = {
   MediaTab: undefined;
@@ -32,10 +34,10 @@ export type MainTabsParamList = {
 export const MainTabs = () => (
   <BottomTabNavigator.Navigator
     screenOptions={{
-      tabBarActiveTintColor: new Color(colors.primary),
-      tabBarInactiveTintColor: new Color(colors.textSecondary),
-      tabBarActiveBackgroundColor: new Color(colors.background),
-      tabBarInactiveBackgroundColor: new Color(colors.background),
+      tabBarActiveTintColor: colors.primary,
+      tabBarInactiveTintColor: colors.textSecondary,
+      tabBarActiveBackgroundColor: colors.background,
+      tabBarInactiveBackgroundColor: colors.background,
       headerShown: false,
     }}
   >
@@ -44,10 +46,11 @@ export const MainTabs = () => (
       component={MediaTabNavigator}
       options={{
         tabBarLabel: "Media",
-        tabBarIcon: ({ focused }) => ({
-          name: focused ? "image" : "image-outline",
-          type: "material-community",
-        }),
+        tabBarIcon: ({ focused }) => (
+          <Label className={`material-community ${focused ? 'text-primary' : 'text-secondary'}`}>
+            {focused ? "image" : "image-outline"}
+          </Label>
+        ),
       }}
     />
     <BottomTabNavigator.Screen
@@ -55,10 +58,11 @@ export const MainTabs = () => (
       component={StoreTabNavigator}
       options={{
         tabBarLabel: "Store",
-        tabBarIcon: ({ focused }) => ({
-          name: focused ? "store" : "store-outline",
-          type: "material-community",
-        }),
+        tabBarIcon: ({ focused }) => (
+          <Label className={`material-community ${focused ? 'text-primary' : 'text-secondary'}`}>
+            {focused ? "store" : "store-outline"}
+          </Label>
+        ),
       }}
     />
     <BottomTabNavigator.Screen
@@ -66,10 +70,11 @@ export const MainTabs = () => (
       component={AnalyticsTabNavigator}
       options={{
         tabBarLabel: "Analytics",
-        tabBarIcon: ({ focused }) => ({
-          name: focused ? "chart-bar" : "chart-bar-outline",
-          type: "material-community",
-        }),
+        tabBarIcon: ({ focused }) => (
+          <Label className={`material-community ${focused ? 'text-primary' : 'text-secondary'}`}>
+            {focused ? "chart-bar" : "chart-bar-outline"}
+          </Label>
+        ),
       }}
     />
     <BottomTabNavigator.Screen
@@ -77,10 +82,11 @@ export const MainTabs = () => (
       component={BookingsTabNavigator}
       options={{
         tabBarLabel: "Bookings",
-        tabBarIcon: ({ focused }) => ({
-          name: focused ? "calendar" : "calendar-outline",
-          type: "material-community",
-        }),
+        tabBarIcon: ({ focused }) => (
+          <Label className={`material-community ${focused ? 'text-primary' : 'text-secondary'}`}>
+            {focused ? "calendar" : "calendar-outline"}
+          </Label>
+        ),
       }}
     />
     <BottomTabNavigator.Screen
@@ -88,10 +94,11 @@ export const MainTabs = () => (
       component={TasksTabNavigator}
       options={{
         tabBarLabel: "Tasks",
-        tabBarIcon: ({ focused }) => ({
-          name: focused ? "checkbox-marked" : "checkbox-blank-outline",
-          type: "material-community",
-        }),
+        tabBarIcon: ({ focused }) => (
+          <Label className={`material-community ${focused ? 'text-primary' : 'text-secondary'}`}>
+            {focused ? "checkbox-marked" : "checkbox-blank-outline"}
+          </Label>
+        ),
       }}
     />
     <BottomTabNavigator.Screen
@@ -99,10 +106,11 @@ export const MainTabs = () => (
       component={IntegrationsTabNavigator}
       options={{
         tabBarLabel: "Integrations",
-        tabBarIcon: ({ focused }) => ({
-          name: focused ? "link-variant" : "link-variant-outline",
-          type: "material-community",
-        }),
+        tabBarIcon: ({ focused }) => (
+          <Label className={`material-community ${focused ? 'text-primary' : 'text-secondary'}`}>
+            {focused ? "link-variant" : "link-variant-outline"}
+            </Label>
+        ),
       }}
     />
     <BottomTabNavigator.Screen
@@ -110,10 +118,11 @@ export const MainTabs = () => (
       component={SocialTabNavigator}
       options={{
         tabBarLabel: "Social",
-        tabBarIcon: ({ focused }) => ({
-          name: focused ? "share-variant" : "share-variant-outline",
-          type: "material-community",
-        }),
+        tabBarIcon: ({ focused }) => (
+          <Label className={`material-community ${focused ? 'text-primary' : 'text-secondary'}`}>
+            {focused ? "share-variant" : "share-variant-outline"}
+          </Label>
+        ),
       }}
     />
     <BottomTabNavigator.Screen
@@ -121,10 +130,11 @@ export const MainTabs = () => (
       component={ReviewsTabNavigator}
       options={{
         tabBarLabel: "Reviews",
-        tabBarIcon: ({ focused }) => ({
-          name: focused ? "star" : "star-outline",
-          type: "material-community",
-        }),
+        tabBarIcon: ({ focused }) => (
+          <Label className={`material-community ${focused ? 'text-primary' : 'text-secondary'}`}>
+            {focused ? "star" : "star-outline"}
+          </Label>
+        ),
       }}
     />
     <BottomTabNavigator.Screen
@@ -132,10 +142,11 @@ export const MainTabs = () => (
       component={ExpensesTabNavigator}
       options={{
         tabBarLabel: "Expenses",
-        tabBarIcon: ({ focused }) => ({
-          name: focused ? "cash" : "cash-outline",
-          type: "material-community",
-        }),
+        tabBarIcon: ({ focused }) => (
+          <Label className={`material-community ${focused ? 'text-primary' : 'text-secondary'}`}>
+            {focused ? "cash" : "cash-outline"}
+          </Label>
+        ),
       }}
     />
     <BottomTabNavigator.Screen
@@ -143,10 +154,11 @@ export const MainTabs = () => (
       component={KnowledgeTabNavigator}
       options={{
         tabBarLabel: "Knowledge",
-        tabBarIcon: ({ focused }) => ({
-          name: focused ? "book" : "book-outline",
-          type: "material-community",
-        }),
+        tabBarIcon: ({ focused }) => (
+          <Label className={`material-community ${focused ? 'text-primary' : 'text-secondary'}`}>
+            {focused ? "book" : "book-outline"}
+          </Label>
+        ),
       }}
     />
     <BottomTabNavigator.Screen
@@ -154,10 +166,11 @@ export const MainTabs = () => (
       component={PurchaseTabNavigator}
       options={{
         tabBarLabel: "Purchase",
-        tabBarIcon: ({ focused }) => ({
-          name: focused ? "package-variant" : "package-variant-outline",
-          type: "material-community",
-        }),
+        tabBarIcon: ({ focused }) => (
+          <Label className={`material-community ${focused ? 'text-primary' : 'text-secondary'}`}>
+            {focused ? "package-variant" : "package-variant-outline"}
+          </Label>
+        ),
       }}
     />
   </BottomTabNavigator.Navigator>

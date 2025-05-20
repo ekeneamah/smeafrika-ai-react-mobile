@@ -11,18 +11,20 @@ import {
   Button 
 } from "../../components/native/nativeElements";
 
-export async function LoginScreen({ navigation }) {
+export const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [biometricAvailable, setBiometricAvailable] = React.useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
-  const biometricAvailable = BiometricService.isAvailable();
+
+  React.useEffect(() => {
+    BiometricService.isAvailable().then(setBiometricAvailable);
+  }, []);
 
   const handleBiometricLogin = async () => {
     const verified = await BiometricService.verify('Log in to Vendor App');
     if (verified) {
-      // Get stored credentials and login
-      // This is simplified - you'd need to implement secure credential storage
       dispatch(login({ email: 'stored@email.com', password: 'storedPassword' }));
     }
   };
@@ -32,7 +34,7 @@ export async function LoginScreen({ navigation }) {
       <StackLayout className="p-6 rounded-lg bg-surface">
         <Label className="text-title text-center mb-6">Log In to Your Account</Label>
         
-        {await biometricAvailable && (
+        {biometricAvailable && (
           <Button 
             className="btn-outline mb-4"
             text="Login with Biometrics"
@@ -44,4 +46,4 @@ export async function LoginScreen({ navigation }) {
       </StackLayout>
     </FlexboxLayout>
   );
-}
+};

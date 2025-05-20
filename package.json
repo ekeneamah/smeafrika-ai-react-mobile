@@ -15,6 +15,7 @@
     "@nativescript/firebase-storage": "^3.0.0",
     "@nativescript/picker": "^4.0.0",
     "@nativescript/social-share": "^2.0.0",
+    "@react-navigation/bottom-tabs": "^7.3.13",
     "@reduxjs/toolkit": "^2.1.0",
     "base-64": "^1.0.0",
     "chart.js": "^4.4.1",

@@ -9,7 +9,7 @@ const StackNavigator = stackNavigatorFactory();
 
 export type BookingsStackParamList = {
   BookingList: undefined;
-  BookingForm: { customerId?: string };
+  BookingForm: { customerId?: string; bookingId?: string };
   BookingDetail: { bookingId: string };
   CustomerSelector: undefined;
 };

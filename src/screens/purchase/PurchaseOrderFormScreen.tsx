@@ -11,7 +11,7 @@ import { RootState, AppDispatch } from "../../store/store";
 import { fetchProducts, fetchSuppliers } from "../../store/slices/metaSlice";
 import { savePurchaseOrder } from "../../store/slices/purchaseSlice";
 
-const PurchaseOrderFormScreen = ({ route, navigation }: {
+export const PurchaseOrderFormScreen = ({ route, navigation }: {
   route: RouteProp<PurchaseStackParamList, "PurchaseOrderForm">,
   navigation: FrameNavigationProp<PurchaseStackParamList, "PurchaseOrderForm">
 }) => {
@@ -156,5 +156,3 @@ const PurchaseOrderFormScreen = ({ route, navigation }: {
     </ScrollView>
   );
 };
-
-export default PurchaseOrderFormScreen;

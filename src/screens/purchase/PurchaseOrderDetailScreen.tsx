@@ -17,7 +17,7 @@ import {
 import { fetchOrderById, cancelOrder, trackShipment } from "../../store/slices/purchaseSlice";
 import { RootState } from "../../store/store";
 
-const PurchaseOrderDetailScreen = ({ route, navigation }: {
+export const PurchaseOrderDetailScreen = ({ route, navigation }: {
   route: RouteProp<PurchaseStackParamList, "PurchaseOrderDetail">,
   navigation: FrameNavigationProp<PurchaseStackParamList, "PurchaseOrderDetail">
 }) => {
@@ -179,5 +179,3 @@ const PurchaseOrderDetailScreen = ({ route, navigation }: {
     </ScrollView>
   );
 };
-
-export default PurchaseOrderDetailScreen;
