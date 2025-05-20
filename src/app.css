@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Styles */
+Page {
+  background-color: #F0FFF0;
+  color: #003300;
+}
+
+ActionBar {
+  background-color: #228B22;
+  color: white;
+}
+
+.tab-view {
+  background-color: #F0FFF0;
+  tab-text-color: #003300;
+  selected-tab-text-color: #228B22;
+  tab-background-color: #F0FFF0;
+}
+
+.drawer {
+  background-color: white;
+  border-radius: 16 16 0 0;
+  box-shadow: 0 -2 4 rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+  background-color: #228B22;
+  color: white;
+  font-size: 16;
+  font-weight: bold;
+  border-radius: 8;
+  padding: 12 20;
+}
+
+.btn-secondary {
+  background-color: #2E8B57;
+  color: white;
+  font-size: 16;
+  font-weight: bold;
+  border-radius: 8;
+  padding: 12 20;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #228B22;
+  border-width: 1;
+  border-color: #228B22;
+  font-size: 16;
+  font-weight: bold;
+  border-radius: 8;
+  padding: 12 20;
+}
+
+.card {
+  background-color: white;
+  border-radius: 8;
+  padding: 16;
+  margin: 8;
+  box-shadow: 0 2 4 rgba(0, 0, 0, 0.1);
+}
+
+.text-title {
+  font-size: 20;
+  font-weight: bold;
+  color: #003300;
+  margin-bottom: 8;
+}
+
+.text-subtitle {
+  font-size: 16;
+  font-weight: 500;
+  color: #2E8B57;
+  margin-bottom: 4;
+}
+
+.text-body {
+  font-size: 14;
+  color: #1A1A1A;
+}
+
+.form-input {
+  border-width: 1;
+  border-color: #90EE90;
+  border-radius: 8;
+  padding: 12;
+  margin-bottom: 12;
+  font-size: 16;
+  background-color: white;
+  color: #003300;
+}
+
+.form-label {
+  font-size: 14;
+  font-weight: 500;
+  color: #2E8B57;
+  margin-bottom: 4;
+  margin-left: 4;
+}
+
+.fab {
+  height: 60;
+  width: 60;
+  background-color: #228B22;
+  border-radius: 30;
+  horizontal-align: right;
+  vertical-align: bottom;
+  margin: 16;
+  color: white;
+  font-size: 24;
+  box-shadow: 0 3 6 rgba(0, 0, 0, 0.2);
+}
+
+.grid-item {
+  margin: 4;
+  border-radius: 8;
+  overflow: hidden;
+}

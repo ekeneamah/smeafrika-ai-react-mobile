@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Common functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isVendor() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'vendor';
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isOwner(userId);
+    }
+
+    // Products collection
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isVendor() && 
+        resource.data.vendorId == request.auth.uid;
+    }
+
+    // Media collection
+    match /media/{mediaId} {
+      allow read: if true;
+      allow write: if isVendor() && 
+        resource.data.vendorId == request.auth.uid;
+    }
+
+    //Bookings collection
+    match /bookings/{bookingId} {
+      allow read: if isVendor() && 
+        resource.data.vendorId == request.auth.uid;
+      allow write: if isVendor();
+    }
+
+    // Integrations collection
+    match /integrations/{integrationId} {
+      allow read, write: if isVendor() && 
+        resource.data.vendorId == request.auth.uid;
+    }
+
+    // Reviews collection
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isVendor() && 
+        resource.data.vendorId == request.auth.uid;
+    }
+
+    // Articles collection
+    match /articles/{articleId} {
+      allow read: if true;
+      allow write: if isVendor() && 
+        resource.data.vendorId == request.auth.uid;
+    }
+
+    // Expenses collection
+    match /expenses/{expenseId} {
+      allow read, write: if isVendor() && 
+        resource.data.vendorId == request.auth.uid;
+    }
+  }
+}
