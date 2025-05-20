@@ -4,6 +4,27 @@ import { FrameNavigationProp } from "react-nativescript-navigation";
 import { AnalyticsStackParamList } from "../../components/navigation/AnalyticsTabNavigator";
 import { LoadingIndicator } from "../../components/common/LoadingIndicator";
 import { colors } from "../../theme/colors";
+import {
+  Label,
+  GridLayout,
+  StackLayout,
+  ScrollView,
+  ProgressBar,
+  DropDown,
+  FlexboxLayout
+} from "../../components/native/nativeElements";
+import { registerElement } from "react-nativescript";
+
+registerElement("wrapLayout", () => require("@nativescript/core").WrapLayout);
+
+const WrapLayout: React.FC<{
+  className?: string;
+  children?: React.ReactNode;
+}> = ({ className, children }) =>
+  React.createElement("wrapLayout", {
+    class: className,
+    children,
+  });
 
 type ReviewAnalyticsScreenProps = {
   route: RouteProp<AnalyticsStackParamList, "ReviewAnalytics">,
@@ -23,148 +44,123 @@ export function ReviewAnalyticsScreen({ navigation }: ReviewAnalyticsScreenProps
   }
 
   return (
-    <scrollView class="bg-background">
-      <stackLayout class="p-4">
-        <gridLayout columns="*, auto" class="mb-4">
-          <label col="0" class="text-title">Review Analytics</label>
-          <dropDown
-            col="1"
+    <ScrollView className="bg-background">
+      <StackLayout className="p-4">
+        <GridLayout columns="*, auto" className="mb-4">
+          <Label col={0} className="text-title">Review Analytics</Label>
+          <DropDown
+            col={1}
             items={["This Month", "Last 3 Months", "Last 6 Months", "This Year"]}
             selectedIndex={0}
-            class="w-32"
-            onSelectedIndexChange={(e) => {
+            className="w-32"
+            onSelectedIndexChanged={(e) => {
               const ranges = ["month", "quarter", "half", "year"];
               setTimeRange(ranges[e.object.selectedIndex]);
             }}
           />
-        </gridLayout>
+        </GridLayout>
 
-        <stackLayout class="card">
-          <label class="text-subtitle mb-2">Review Summary</label>
-          <gridLayout columns="*, *" rows="auto, auto" class="text-center">
-            <stackLayout col="0" row="0" class="p-2">
-              <label class="text-title">4.8</label>
-              <label class="text-body">Average Rating</label>
-            </stackLayout>
-            <stackLayout col="1" row="0" class="p-2">
-              <label class="text-title">245</label>
-              <label class="text-body">Total Reviews</label>
-            </stackLayout>
-            <stackLayout col="0" row="1" class="p-2">
-              <label class="text-title">92%</label>
-              <label class="text-body">Response Rate</label>
-            </stackLayout>
-            <stackLayout col="1" row="1" class="p-2">
-              <label class="text-title">6h</label>
-              <label class="text-body">Avg. Response Time</label>
-            </stackLayout>
-          </gridLayout>
-        </stackLayout>
+        <StackLayout className="card">
+          <Label className="text-subtitle mb-2">Review Summary</Label>
+          <GridLayout columns="*, *" rows="auto, auto" className="text-center">
+            <StackLayout col={0} row={0} className="p-2">
+              <Label className="text-title">4.8</Label>
+              <Label className="text-body">Average Rating</Label>
+            </StackLayout>
+            <StackLayout col={1} row={0} className="p-2">
+              <Label className="text-title">245</Label>
+              <Label className="text-body">Total Reviews</Label>
+            </StackLayout>
+            <StackLayout col={0} row={1} className="p-2">
+              <Label className="text-title">92%</Label>
+              <Label className="text-body">Response Rate</Label>
+            </StackLayout>
+            <StackLayout col={1} row={1} className="p-2">
+              <Label className="text-title">6h</Label>
+              <Label className="text-body">Avg. Response Time</Label>
+            </StackLayout>
+          </GridLayout>
+        </StackLayout>
 
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Rating Distribution</label>
-          
-          <gridLayout columns="auto, *, auto" rows="auto, auto, auto, auto, auto" class="mb-2">
-            <label col="0" row="0" class="text-body">5 ★</label>
-            <progressBar col="1" row="0" value={75} maxValue={100} class="bg-primary100 mx-2" color={colors.primary} />
-            <label col="2" row="0" class="text-body">75%</label>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Rating Distribution</Label>
+          {[
+            { stars: "5", value: 75, color: colors.primary },
+            { stars: "4", value: 15, color: colors.primary },
+            { stars: "3", value: 5, color: colors.warning },
+            { stars: "2", value: 3, color: colors.error },
+            { stars: "1", value: 2, color: colors.error },
+          ].map((r, i) => (
+            <GridLayout key={i} columns="auto, *, auto" className="mb-2">
+              <Label col={0} className="text-body">{r.stars} ★</Label>
+              <ProgressBar col={1} value={r.value} maxValue={100} className="bg-primary100 mx-2" color={r.color} />
+              <Label col={2} className="text-body">{r.value}%</Label>
+            </GridLayout>
+          ))}
+        </StackLayout>
 
-            <label col="0" row="1" class="text-body">4 ★</label>
-            <progressBar col="1" row="1" value={15} maxValue={100} class="bg-primary100 mx-2" color={colors.primary} />
-            <label col="2" row="1" class="text-body">15%</label>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Review Trend</Label>
+          <GridLayout columns="*" className="h-48 bg-primary100 rounded-md">
+            <Label className="text-center">Review Trend Chart</Label>
+          </GridLayout>
+        </StackLayout>
 
-            <label col="0" row="2" class="text-body">3 ★</label>
-            <progressBar col="1" row="2" value={5} maxValue={100} class="bg-primary100 mx-2" color={colors.warning} />
-            <label col="2" row="2" class="text-body">5%</label>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Top Rated Products</Label>
+          {[
+            { title: "Wireless Earbuds", rating: "4.9 ★", reviews: "85 reviews" },
+            { title: "Smart Watch", rating: "4.8 ★", reviews: "62 reviews" },
+            { title: "Bluetooth Speaker", rating: "4.7 ★", reviews: "48 reviews" },
+          ].map((p, i) => (
+            <StackLayout key={i} className={i < 2 ? "border-b border-divider p-2" : "p-2"}>
+              <GridLayout columns="*, auto" rows="auto, auto">
+                <Label col={0} row={0} className="text-body font-bold">{p.title}</Label>
+                <Label col={1} row={0} className="text-body">{p.rating}</Label>
+                <Label col={0} row={1} className="text-body text-secondary">{p.reviews}</Label>
+              </GridLayout>
+            </StackLayout>
+          ))}
+        </StackLayout>
 
-            <label col="0" row="3" class="text-body">2 ★</label>
-            <progressBar col="1" row="3" value={3} maxValue={100} class="bg-primary100 mx-2" color={colors.error} />
-            <label col="2" row="3" class="text-body">3%</label>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Common Keywords</Label>
+          <WrapLayout>
+            {["Great quality (45)", "Fast shipping (32)", "Good value (28)", "Excellent service (25)", "Recommended (20)"].map((text, i) => (
+              <StackLayout key={i} className="bg-primary100 rounded-full px-3 py-1 m-1">
+                <Label className="text-primary">{text}</Label>
+              </StackLayout>
+            ))}
+          </WrapLayout>
+        </StackLayout>
 
-            <label col="0" row="4" class="text-body">1 ★</label>
-            <progressBar col="1" row="4" value={2} maxValue={100} class="bg-primary100 mx-2" color={colors.error} />
-            <label col="2" row="4" class="text-body">2%</label>
-          </gridLayout>
-        </stackLayout>
-
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Review Trend</label>
-          <gridLayout class="h-48 bg-primary100 rounded-md">
-            <label class="text-center">Review Trend Chart</label>
-          </gridLayout>
-        </stackLayout>
-
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Top Rated Products</label>
-          
-          <stackLayout class="border-b border-divider p-2">
-            <gridLayout columns="*, auto" rows="auto, auto">
-              <label col="0" row="0" class="text-body font-bold">Wireless Earbuds</label>
-              <label col="1" row="0" class="text-body">4.9 ★</label>
-              <label col="0" row="1" class="text-body text-secondary">85 reviews</label>
-            </gridLayout>
-          </stackLayout>
-          
-          <stackLayout class="border-b border-divider p-2">
-            <gridLayout columns="*, auto" rows="auto, auto">
-              <label col="0" row="0" class="text-body font-bold">Smart Watch</label>
-              <label col="1" row="0" class="text-body">4.8 ★</label>
-              <label col="0" row="1" class="text-body text-secondary">62 reviews</label>
-            </gridLayout>
-          </stackLayout>
-          
-          <stackLayout class="p-2">
-            <gridLayout columns="*, auto" rows="auto, auto">
-              <label col="0" row="0" class="text-body font-bold">Bluetooth Speaker</label>
-              <label col="1" row="0" class="text-body">4.7 ★</label>
-              <label col="0" row="1" class="text-body text-secondary">48 reviews</label>
-            </gridLayout>
-          </stackLayout>
-        </stackLayout>
-
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Common Keywords</label>
-          <wrapLayout>
-            <stackLayout class="bg-primary100 rounded-full px-3 py-1 m-1">
-              <label class="text-primary">Great quality (45)</label>
-            </stackLayout>
-            <stackLayout class="bg-primary100 rounded-full px-3 py-1 m-1">
-              <label class="text-primary">Fast shipping (32)</label>
-            </stackLayout>
-            <stackLayout class="bg-primary100 rounded-full px-3 py-1 m-1">
-              <label class="text-primary">Good value (28)</label>
-            </stackLayout>
-            <stackLayout class="bg-primary100 rounded-full px-3 py-1 m-1">
-              <label class="text-primary">Excellent service (25)</label>
-            </stackLayout>
-            <stackLayout class="bg-primary100 rounded-full px-3 py-1 m-1">
-              <label class="text-primary">Recommended (20)</label>
-            </stackLayout>
-          </wrapLayout>
-        </stackLayout>
-
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Recent Reviews</label>
-          
-          <stackLayout class="border-b border-divider p-2">
-            <gridLayout columns="*, auto" rows="auto, auto, auto">
-              <label col="0" row="0" class="text-body font-bold">Wireless Earbuds</label>
-              <label col="1" row="0" class="text-body">5.0 ★</label>
-              <label col="0" row="1" class="text-body">"Great sound quality and battery life!"</label>
-              <label col="0" row="2" class="text-body text-secondary">2 hours ago</label>
-            </gridLayout>
-          </stackLayout>
-          
-          <stackLayout class="p-2">
-            <gridLayout columns="*, auto" rows="auto, auto, auto">
-              <label col="0" row="0" class="text-body font-bold">Smart Watch</label>
-              <label col="1" row="0" class="text-body">4.5 ★</label>
-              <label col="0" row="1" class="text-body">"Good features but could be better"</label>
-              <label col="0" row="2" class="text-body text-secondary">5 hours ago</label>
-            </gridLayout>
-          </stackLayout>
-        </stackLayout>
-      </stackLayout>
-    </scrollView>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Recent Reviews</Label>
+          {[
+            {
+              title: "Wireless Earbuds",
+              rating: "5.0 ★",
+              comment: "\"Great sound quality and battery life!\"",
+              time: "2 hours ago",
+            },
+            {
+              title: "Smart Watch",
+              rating: "4.5 ★",
+              comment: "\"Good features but could be better\"",
+              time: "5 hours ago",
+            },
+          ].map((r, i) => (
+            <StackLayout key={i} className={i === 0 ? "border-b border-divider p-2" : "p-2"}>
+              <GridLayout columns="*, auto" rows="auto, auto, auto">
+                <Label col={0} row={0} className="text-body font-bold">{r.title}</Label>
+                <Label col={1} row={0} className="text-body">{r.rating}</Label>
+                <Label col={0} row={1} className="text-body">{r.comment}</Label>
+                <Label col={0} row={2} className="text-body text-secondary">{r.time}</Label>
+              </GridLayout>
+            </StackLayout>
+          ))}
+        </StackLayout>
+      </StackLayout>
+    </ScrollView>
   );
 }

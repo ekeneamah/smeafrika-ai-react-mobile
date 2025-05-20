@@ -1,129 +1,156 @@
 import * as React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { RouteProp } from '@react-navigation/core';
 import { FrameNavigationProp } from "react-nativescript-navigation";
 import { PurchaseStackParamList } from "../../components/navigation/PurchaseTabNavigator";
-import { LoadingIndicator } from "../../components/common/LoadingIndicator";
 import { SwipeUpPanel } from "../../components/common/SwipeUpPanel";
+import { ScrollView, StackLayout, GridLayout, Label, Button } from "../../components/native/nativeElements";
+import { RootState } from "../../store/store";
 import { colors } from "../../theme/colors";
+import { fetchOrders, deleteOrder } from "../../store/slices/purchaseSlice";
+import { Dialogs } from "@nativescript/core";
 
-type PurchaseOrderListScreenProps = {
+const PurchaseOrderListScreen = ({ navigation }: {
   route: RouteProp<PurchaseStackParamList, "PurchaseOrderList">,
-  navigation: FrameNavigationProp<PurchaseStackParamList, "PurchaseOrderList">,
-};
-
-export function PurchaseOrderListScreen({ navigation }: PurchaseOrderListScreenProps) {
-  const [isLoading, setIsLoading] = React.useState(true);
+  navigation: FrameNavigationProp<PurchaseStackParamList, "PurchaseOrderList">
+}) => {
+  const dispatch = useDispatch();
+  const { orders, isLoading, error } = useSelector((state: RootState) => state.purchase);
   const [filterOpen, setFilterOpen] = React.useState(false);
   const [searchText, setSearchText] = React.useState('');
   const [viewMode, setViewMode] = React.useState<'list' | 'grid'>('list');
+  const [currentPage, setCurrentPage] = React.useState(1);
 
   React.useEffect(() => {
-    // Simulate data loading
-    setTimeout(() => setIsLoading(false), 1500);
-  }, []);
+    dispatch(fetchOrders(currentPage) as any);
+  }, [dispatch, currentPage]);
+
+  const filteredOrders = orders.filter(order =>
+    order.id.toLowerCase().includes(searchText.toLowerCase()) ||
+    order.supplierId.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const handleDeleteOrder = async (orderId: string) => {
+    const confirmed = await Dialogs.confirm({
+      title: "Confirm Delete",
+      message: "Are you sure you want to delete this order?",
+      okButtonText: "Delete",
+      cancelButtonText: "Cancel"
+    });
+    if (!confirmed) return;
+    try {
+      await dispatch(deleteOrder(orderId) as any).unwrap();
+    } catch (error) {
+      Dialogs.alert({ title: "Error", message: "Failed to delete order.", okButtonText: "OK" });
+    }
+  };
 
   if (isLoading) {
-    return <LoadingIndicator text="Loading purchase orders..." />;
+    return <Label className="text-center mt-4">Loading purchase orders...</Label>;
   }
 
   return (
-    <gridLayout rows="auto, auto, *" class="bg-background">
-      <stackLayout row="0" class="p-4">
+    <GridLayout columns="*" rows="auto, auto, *, auto" className="bg-background">
+      <StackLayout row={0} className="p-4">
         <searchBar 
           hint="Search orders..." 
           text={searchText} 
-          onTextChange={(e) => setSearchText(e.object.text)}
-          class="form-input"
+          onTextChange={(e) => setSearchText(e.value)}
+          className="form-input"
         />
-      </stackLayout>
-      
-      <gridLayout row="1" columns="auto, *, auto" class="p-2">
-        <button 
-          col="0" 
+      </StackLayout>
+
+      <GridLayout row={1} columns="auto, *, auto" className="p-2">
+        <Button 
+          col={0} 
           text="Filter" 
-          class="btn-outline text-sm p-2" 
+          className="btn-outline text-sm p-2" 
           onTap={() => setFilterOpen(true)}
         />
-        
-        <label col="1" class="text-subtitle ml-2 text-center">
-          12 Orders
-        </label>
-        
-        <segmentedBar 
-          col="2"
-          selectedIndex={viewMode === 'list' ? 0 : 1}
-          class="w-24"
-          selectedBackgroundColor={colors.primary}
-          onSelectedIndexChange={(e) => setViewMode(e.object.selectedIndex === 0 ? 'list' : 'grid')}
-        >
-          <segmentedBarItem title="List" />
-          <segmentedBarItem title="Grid" />
-        </segmentedBar>
-      </gridLayout>
-      
-      <scrollView row="2" class="p-2">
-        <stackLayout>
-          {/* Sample Order Items */}
-          <stackLayout class="card" onTap={() => navigation.navigate("PurchaseOrderDetail", { orderId: "1" })}>
-            <gridLayout columns="*, auto" rows="auto, auto, auto">
-              <label col="0" row="0" class="text-subtitle">#PO-001</label>
-              <label col="1" row="0" class="text-success">Delivered</label>
-              <label col="0" row="1" class="text-body">Supplier: Tech Supplies Inc.</label>
-              <label col="1" row="1" class="text-body">$1,250.00</label>
-              <label col="0" row="2" class="text-body text-secondary">Due: Mar 15, 2024</label>
-            </gridLayout>
-          </stackLayout>
-          
-          <stackLayout class="card" onTap={() => navigation.navigate("PurchaseOrderDetail", { orderId: "2" })}>
-            <gridLayout columns="*, auto" rows="auto, auto, auto">
-              <label col="0" row="0" class="text-subtitle">#PO-002</label>
-              <label col="1" row="0" class="text-warning">Pending</label>
-              <label col="0" row="1" class="text-body">Supplier: Global Electronics</label>
-              <label col="1" row="1" class="text-body">$2,780.50</label>
-              <label col="0" row="2" class="text-body text-secondary">Due: Mar 20, 2024</label>
-            </gridLayout>
-          </stackLayout>
-        </stackLayout>
-      </scrollView>
-      
-      <button text="+" class="fab" onTap={() => navigation.navigate("PurchaseOrderForm")} />
-      
+
+        <Label col={1} className="text-subtitle ml-2 text-center">
+          {filteredOrders.length} Orders
+        </Label>
+
+      <segmentedBar 
+  col={2}
+  selectedIndex={viewMode === 'list' ? 0 : 1}
+  className="w-24"
+  selectedBackgroundColor={colors.primary}
+  onSelectedIndexChange={(e) => {
+    const index = (e.object as any).selectedIndex;
+    setViewMode(index === 0 ? 'list' : 'grid');
+  }}
+>
+  <segmentedBarItem title="List" />
+  <segmentedBarItem title="Grid" />
+</segmentedBar>
+
+      </GridLayout>
+
+      <ScrollView row={2} className="p-2">
+        <StackLayout>
+          {filteredOrders.map(order => (
+            <StackLayout key={order.id} className="card swipe-item" onTap={() => navigation.navigate("PurchaseOrderDetail", { orderId: order.id })}>
+              <GridLayout columns="*, auto" rows="auto, auto, auto">
+                <Label col={0} row={0} className="text-subtitle">#{order.id}</Label>
+                <Label col={1} row={0} className={`text-${order.status === 'delivered' ? 'success' : order.status === 'pending' ? 'warning' : 'primary'}`}>{order.status}</Label>
+                <Label col={0} row={1} className="text-body">Supplier: {order.supplierId}</Label>
+                <Label col={1} row={1} className="text-body">${order.totalAmount.toFixed(2)}</Label>
+                <Label col={0} row={2} className="text-body text-secondary">Due: {order.deliveryDate}</Label>
+              </GridLayout>
+              <Button text="Delete" className="text-error text-sm mt-1" onTap={() => handleDeleteOrder(order.id)} />
+            </StackLayout>
+          ))}
+        </StackLayout>
+      </ScrollView>
+
+      <GridLayout row={3} columns="*, auto, *" className="p-2">
+        <Button col={0} text="Prev" className="btn-outline" onTap={() => setCurrentPage(p => Math.max(1, p - 1))} />
+        <Label col={1} className="text-center text-sm">Page {currentPage}</Label>
+        <Button col={2} text="Next" className="btn-outline" onTap={() => setCurrentPage(p => p + 1)} />
+      </GridLayout>
+
+      <Button text="+" className="fab" onTap={() => navigation.navigate({ name: "PurchaseOrderForm", params: {} })} />
+
       <SwipeUpPanel
         visible={filterOpen}
         onClose={() => setFilterOpen(false)}
         title="Filter Orders"
       >
-        <stackLayout class="p-4">
-          <stackLayout class="mb-4">
-            <label class="form-label">Status</label>
-            <segmentedBar selectedIndex={0} class="mb-2">
+        <StackLayout className="p-4">
+          <StackLayout className="mb-4">
+            <Label className="form-label">Status</Label>
+            <segmentedBar selectedIndex={0} className="mb-2">
               <segmentedBarItem title="All" />
               <segmentedBarItem title="Pending" />
               <segmentedBarItem title="Delivered" />
             </segmentedBar>
-          </stackLayout>
-          
-          <stackLayout class="mb-4">
-            <label class="form-label">Date Range</label>
-            <segmentedBar selectedIndex={0} class="mb-2">
+          </StackLayout>
+
+          <StackLayout className="mb-4">
+            <Label className="form-label">Date Range</Label>
+            <segmentedBar selectedIndex={0} className="mb-2">
               <segmentedBarItem title="All" />
               <segmentedBarItem title="This Month" />
               <segmentedBarItem title="Last Month" />
             </segmentedBar>
-          </stackLayout>
-          
-          <stackLayout class="mb-4">
-            <label class="form-label">Sort By</label>
+          </StackLayout>
+
+          <StackLayout className="mb-4">
+            <Label className="form-label">Sort By</Label>
             <segmentedBar selectedIndex={0}>
               <segmentedBarItem title="Date" />
               <segmentedBarItem title="Amount" />
               <segmentedBarItem title="Status" />
             </segmentedBar>
-          </stackLayout>
-          
-          <button class="btn-primary mt-4" text="Apply Filters" onTap={() => setFilterOpen(false)} />
-        </stackLayout>
+          </StackLayout>
+
+          <Button className="btn-primary mt-4" text="Apply Filters" onTap={() => setFilterOpen(false)} />
+        </StackLayout>
       </SwipeUpPanel>
-    </gridLayout>
+    </GridLayout>
   );
-}
+};
+
+export default PurchaseOrderListScreen;

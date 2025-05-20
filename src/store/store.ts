@@ -3,8 +3,10 @@ import authReducer from './slices/authSlice';
 import productsReducer from './slices/productsSlice';
 import ordersReducer from './slices/ordersSlice';
 import tasksReducer from './slices/tasksSlice';
-import expensesReducer from './slices/expensesSlice';
 import analyticsReducer from './slices/analyticsSlice';
+import expensesReducer from './slices/expensesSlice';
+import purchaseReducer from './slices/purchaseSlice';
+import metaReducer from './slices/metaSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +16,8 @@ export const store = configureStore({
     tasks: tasksReducer,
     expenses: expensesReducer,
     analytics: analyticsReducer,
+    purchase: purchaseReducer,
+    meta: metaReducer,
   },
 });
 

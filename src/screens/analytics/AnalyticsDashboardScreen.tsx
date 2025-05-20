@@ -23,7 +23,7 @@ type AnalyticsDashboardScreenProps = {
 };
 
 export function AnalyticsDashboardScreen({ navigation }: AnalyticsDashboardScreenProps) {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<import("../../store/store").AppDispatch>();
   const { currentFilter } = useSelector((state: RootState) => state.analytics);
 
   React.useEffect(() => {

@@ -1,17 +1,6 @@
 // components/common/Dropdown.tsx
 import * as React from "react";
-import { registerElement } from "react-nativescript";
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      "drop-down": any;
-    }
-  }
-}
-
-// Register only once
-registerElement("drop-down", () => require("nativescript-drop-down").DropDown);
+import { DropDown } from "../native/nativeElements";
 
 type DropdownProps = {
   items: string[];
@@ -23,11 +12,11 @@ type DropdownProps = {
 
 export const Dropdown: React.FC<DropdownProps> = ({ items, selectedIndex, className, onChange, col }) => {
   return (
-    <drop-down
+    <DropDown
       col={col}
-      class={className}
       items={items}
       selectedIndex={selectedIndex}
+      className={className}
       onSelectedIndexChanged={(e: any) => onChange(e.object.selectedIndex)}
     />
   );

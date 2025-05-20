@@ -4,6 +4,14 @@ import { FrameNavigationProp } from "react-nativescript-navigation";
 import { AnalyticsStackParamList } from "../../components/navigation/AnalyticsTabNavigator";
 import { LoadingIndicator } from "../../components/common/LoadingIndicator";
 import { colors } from "../../theme/colors";
+import {
+  Label,
+  GridLayout,
+  StackLayout,
+  ScrollView,
+  ProgressBar,
+  DropDown
+} from "../../components/native/nativeElements";
 
 type SalesReportScreenProps = {
   route: RouteProp<AnalyticsStackParamList, "SalesReport">,
@@ -23,107 +31,90 @@ export function SalesReportScreen({ route }: SalesReportScreenProps) {
   }
 
   return (
-    <scrollView class="bg-background">
-      <stackLayout class="p-4">
-        <gridLayout columns="*, auto" class="mb-4">
-          <label col="0" class="text-title">Sales Report</label>
-          <dropDown
-            col="1"
+    <ScrollView className="bg-background">
+      <StackLayout className="p-4">
+        <GridLayout columns="*, auto" className="mb-4">
+          <Label col={0} className="text-title">Sales Report</Label>
+          <DropDown
+            col={1}
             items={["This Week", "This Month", "This Quarter", "This Year"]}
             selectedIndex={0}
-            class="w-32"
-            onSelectedIndexChange={(e) => {
+            className="w-32"
+            onSelectedIndexChanged={(e) => {
               const ranges = ["week", "month", "quarter", "year"];
               setTimeRange(ranges[e.object.selectedIndex]);
             }}
           />
-        </gridLayout>
+        </GridLayout>
 
-        <stackLayout class="card">
-          <label class="text-subtitle mb-2">Sales Overview</label>
-          <gridLayout columns="*, *" rows="auto, auto" class="text-center">
-            <stackLayout col="0" row="0" class="p-2">
-              <label class="text-title">$24,500</label>
-              <label class="text-body">Total Sales</label>
-            </stackLayout>
-            <stackLayout col="1" row="0" class="p-2">
-              <label class="text-title">186</label>
-              <label class="text-body">Orders</label>
-            </stackLayout>
-            <stackLayout col="0" row="1" class="p-2">
-              <label class="text-title">$131.72</label>
-              <label class="text-body">Avg. Order Value</label>
-            </stackLayout>
-            <stackLayout col="1" row="1" class="p-2">
-              <label class="text-title">3.2%</label>
-              <label class="text-body">Conversion Rate</label>
-            </stackLayout>
-          </gridLayout>
-        </stackLayout>
+        <StackLayout className="card">
+          <Label className="text-subtitle mb-2">Sales Overview</Label>
+          <GridLayout columns="*, *" rows="auto, auto" className="text-center">
+            <StackLayout col={0} row={0} className="p-2">
+              <Label className="text-title">$24,500</Label>
+              <Label className="text-body">Total Sales</Label>
+            </StackLayout>
+            <StackLayout col={1} row={0} className="p-2">
+              <Label className="text-title">186</Label>
+              <Label className="text-body">Orders</Label>
+            </StackLayout>
+            <StackLayout col={0} row={1} className="p-2">
+              <Label className="text-title">$131.72</Label>
+              <Label className="text-body">Avg. Order Value</Label>
+            </StackLayout>
+            <StackLayout col={1} row={1} className="p-2">
+              <Label className="text-title">3.2%</Label>
+              <Label className="text-body">Conversion Rate</Label>
+            </StackLayout>
+          </GridLayout>
+        </StackLayout>
 
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Sales Trend</label>
-          <gridLayout class="h-48 bg-primary100 rounded-md">
-            <label class="text-center">Sales Trend Chart</label>
-          </gridLayout>
-        </stackLayout>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Sales Trend</Label>
+          <GridLayout columns="*" className="h-48 bg-primary100 rounded-md">
+            <Label className="text-center">Sales Trend Chart</Label>
+          </GridLayout>
+        </StackLayout>
 
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Top Products</label>
-          
-          <stackLayout class="border-b border-divider p-2">
-            <gridLayout columns="*, auto" rows="auto, auto">
-              <label col="0" row="0" class="text-body font-bold">Wireless Earbuds</label>
-              <label col="1" row="0" class="text-body">$5,200</label>
-              <label col="0" row="1" class="text-body text-secondary">40 units sold</label>
-            </gridLayout>
-          </stackLayout>
-          
-          <stackLayout class="border-b border-divider p-2">
-            <gridLayout columns="*, auto" rows="auto, auto">
-              <label col="0" row="0" class="text-body font-bold">Smart Watch</label>
-              <label col="1" row="0" class="text-body">$4,800</label>
-              <label col="0" row="1" class="text-body text-secondary">24 units sold</label>
-            </gridLayout>
-          </stackLayout>
-          
-          <stackLayout class="p-2">
-            <gridLayout columns="*, auto" rows="auto, auto">
-              <label col="0" row="0" class="text-body font-bold">Bluetooth Speaker</label>
-              <label col="1" row="0" class="text-body">$3,200</label>
-              <label col="0" row="1" class="text-body text-secondary">40 units sold</label>
-            </gridLayout>
-          </stackLayout>
-        </stackLayout>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Top Products</Label>
+          {[
+            { title: "Wireless Earbuds", sales: "$5,200", units: "40 units sold" },
+            { title: "Smart Watch", sales: "$4,800", units: "24 units sold" },
+            { title: "Bluetooth Speaker", sales: "$3,200", units: "40 units sold" },
+          ].map((p, i) => (
+            <StackLayout key={i} className={i < 2 ? "border-b border-divider p-2" : "p-2"}>
+              <GridLayout columns="*, auto" rows="auto, auto">
+                <Label col={0} row={0} className="text-body font-bold">{p.title}</Label>
+                <Label col={1} row={0} className="text-body">{p.sales}</Label>
+                <Label col={0} row={1} className="text-body text-secondary">{p.units}</Label>
+              </GridLayout>
+            </StackLayout>
+          ))}
+        </StackLayout>
 
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Sales by Category</label>
-          <gridLayout class="h-48 bg-primary100 rounded-md">
-            <label class="text-center">Category Distribution Chart</label>
-          </gridLayout>
-        </stackLayout>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Sales by Category</Label>
+          <GridLayout columns="*" className="h-48 bg-primary100 rounded-md">
+            <Label className="text-center">Category Distribution Chart</Label>
+          </GridLayout>
+        </StackLayout>
 
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Payment Methods</label>
-          <gridLayout columns="*, auto" rows="auto, auto, auto" class="mb-2">
-            <label col="0" row="0" class="text-body">Credit Card</label>
-            <label col="1" row="0" class="text-body">65%</label>
-            <progressBar row="1" colSpan="2" value={65} maxValue={100} class="bg-primary100" color={colors.primary} />
-          </gridLayout>
-
-          <gridLayout columns="*, auto" rows="auto, auto, auto" class="mb-2">
-            <label col="0" row="0" class="text-body">PayPal</label>
-            <label col="1" row="0" class="text-body">25%</label>
-            <progressBar row="1" colSpan="2" value={25} maxValue={100} class="bg-primary100" color={colors.primary} />
-          </gridLayout>
-
-          <gridLayout columns="*, auto" rows="auto, auto, auto">
-            <label col="0" row="0" class="text-body">Bank Transfer</label>
-            <label col="1" row="0" class="text-body">10%</label>
-            <progressBar row="1" colSpan="2" value={10} maxValue={100} class="bg-primary100" color={colors.primary} />
-          </gridLayout>
-        </stackLayout>
-      </stackLayout>
-    </scrollView>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Payment Methods</Label>
+          {[
+            { method: "Credit Card", value: 65 },
+            { method: "PayPal", value: 25 },
+            { method: "Bank Transfer", value: 10 },
+          ].map((p, i) => (
+            <GridLayout key={i} columns="*, auto" rows="auto, auto, auto" className="mb-2">
+              <Label col={0} row={0} className="text-body">{p.method}</Label>
+              <Label col={1} row={0} className="text-body">{p.value}%</Label>
+              <ProgressBar row={1} colSpan={2} value={p.value} maxValue={100} className="bg-primary100" color={colors.primary} />
+            </GridLayout>
+          ))}
+        </StackLayout>
+      </StackLayout>
+    </ScrollView>
   );
 }

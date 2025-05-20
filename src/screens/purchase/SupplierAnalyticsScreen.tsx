@@ -1,153 +1,142 @@
 import * as React from "react";
 import { RouteProp } from '@react-navigation/core';
 import { FrameNavigationProp } from "react-nativescript-navigation";
+import { useDispatch, useSelector } from "react-redux";
 import { PurchaseStackParamList } from "../../components/navigation/PurchaseTabNavigator";
 import { LoadingIndicator } from "../../components/common/LoadingIndicator";
+import { ScrollView, StackLayout, GridLayout, Label } from "../../components/native/nativeElements";
 import { colors } from "../../theme/colors";
+import { Dropdown } from "../../components/common/Dropdown";
+import { fetchSupplierAnalytics } from "../../store/slices/analyticsSlice";
+import { RootState } from "../../store/store";
 
-type SupplierAnalyticsScreenProps = {
+export function SupplierAnalyticsScreen({ route }: {
   route: RouteProp<PurchaseStackParamList, "SupplierAnalytics">,
-  navigation: FrameNavigationProp<PurchaseStackParamList, "SupplierAnalytics">,
-};
-
-export function SupplierAnalyticsScreen({ route }: SupplierAnalyticsScreenProps) {
+  navigation: FrameNavigationProp<PurchaseStackParamList, "SupplierAnalytics">
+}) {
   const { supplierId } = route.params;
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [timeRange, setTimeRange] = React.useState('month');
+  const dispatch = useDispatch();
+  const [timeRange, setTimeRange] = React.useState<'month' | 'quarter' | 'half' | 'year'>('month');
+  const { analyticsData, isLoading } = useSelector((state: RootState) => state.analytics);
 
   React.useEffect(() => {
-    // Simulate data loading
-    setTimeout(() => setIsLoading(false), 1500);
-  }, []);
+    dispatch(fetchSupplierAnalytics({ supplierId, timeRange }) as any);
+  }, [dispatch, supplierId, timeRange]);
 
-  if (isLoading) {
+  if (isLoading || !analyticsData) {
     return <LoadingIndicator text="Loading analytics..." />;
   }
 
   return (
-    <scrollView class="bg-background">
-      <stackLayout class="p-4">
-        <gridLayout columns="*, auto" class="mb-4">
-          <label col="0" class="text-title">Supplier Analytics</label>
-          <dropDown
-            col="1"
+    <ScrollView className="bg-background">
+      <StackLayout className="p-4">
+        <GridLayout columns="*, auto" className="mb-4">
+          <Label col={0} className="text-title">Supplier Analytics</Label>
+          <DropDown
+            col={1}
             items={["This Month", "Last 3 Months", "Last 6 Months", "This Year"]}
             selectedIndex={0}
-            class="w-32"
+            className="w-32"
             onSelectedIndexChanged={(e) => {
               const ranges = ["month", "quarter", "half", "year"];
-              setTimeRange(ranges[e.object.selectedIndex]);
+              setTimeRange(ranges[(e.object as any).selectedIndex]);
             }}
           />
-        </gridLayout>
+        </GridLayout>
 
-        <stackLayout class="card">
-          <label class="text-subtitle mb-2">Order Summary</label>
-          <gridLayout columns="*, *" rows="auto, auto" class="text-center">
-            <stackLayout col="0" row="0" class="p-2">
-              <label class="text-title">25</label>
-              <label class="text-body">Total Orders</label>
-            </stackLayout>
-            <stackLayout col="1" row="0" class="p-2">
-              <label class="text-title">$45,250</label>
-              <label class="text-body">Total Value</label>
-            </stackLayout>
-            <stackLayout col="0" row="1" class="p-2">
-              <label class="text-title">$1,810</label>
-              <label class="text-body">Avg. Order Value</label>
-            </stackLayout>
-            <stackLayout col="1" row="1" class="p-2">
-              <label class="text-title">8</label>
-              <label class="text-body">Active Orders</label>
-            </stackLayout>
-          </gridLayout>
-        </stackLayout>
+        <StackLayout className="card">
+          <Label className="text-subtitle mb-2">Order Summary</Label>
+          <GridLayout columns="*, *" rows="auto, auto" className="text-center">
+            <StackLayout col={0} row={0} className="p-2">
+              <Label className="text-title">{analyticsData.totalOrders}</Label>
+              <Label className="text-body">Total Orders</Label>
+            </StackLayout>
+            <StackLayout col={1} row={0} className="p-2">
+              <Label className="text-title">${analyticsData.totalValue}</Label>
+              <Label className="text-body">Total Value</Label>
+            </StackLayout>
+            <StackLayout col={0} row={1} className="p-2">
+              <Label className="text-title">${analyticsData.avgOrderValue}</Label>
+              <Label className="text-body">Avg. Order Value</Label>
+            </StackLayout>
+            <StackLayout col={1} row={1} className="p-2">
+              <Label className="text-title">{analyticsData.activeOrders}</Label>
+              <Label className="text-body">Active Orders</Label>
+            </StackLayout>
+          </GridLayout>
+        </StackLayout>
 
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Order Trends</label>
-          {/* Chart placeholder */}
-          <gridLayout class="h-48 bg-primary100 rounded-md">
-            <label class="text-center">Order Value Trend Chart</label>
-          </gridLayout>
-        </stackLayout>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Order Trends</Label>
+          <GridLayout columns="*" className="h-48 bg-primary100 rounded-md">
+            <Label className="text-center">Order Value Trend Chart</Label>
+          </GridLayout>
+        </StackLayout>
 
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Performance Metrics</label>
-          <stackLayout class="mb-4">
-            <gridLayout columns="*, auto" class="mb-2">
-              <label col="0" class="text-body">On-Time Delivery Rate</label>
-              <label col="1" class="text-success">98%</label>
-            </gridLayout>
-            <progressBar value={98} maxValue={100} class="bg-primary100" color={colors.success} />
-          </stackLayout>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Performance Metrics</Label>
+          <StackLayout className="mb-4">
+            <GridLayout columns="*, auto" className="mb-2">
+              <Label col={0} className="text-body">On-Time Delivery Rate</Label>
+              <Label col={1} className="text-success">{analyticsData.onTimeDeliveryRate}%</Label>
+            </GridLayout>
+            <progressBar value={analyticsData.onTimeDeliveryRate} maxValue={100} className="bg-primary100" color={colors.success} />
+          </StackLayout>
 
-          <stackLayout class="mb-4">
-            <gridLayout columns="*, auto" class="mb-2">
-              <label col="0" class="text-body">Quality Rating</label>
-              <label col="1" class="text-primary">4.8/5.0</label>
-            </gridLayout>
-            <progressBar value={4.8} maxValue={5} class="bg-primary100" color={colors.primary} />
-          </stackLayout>
+          <StackLayout className="mb-4">
+            <GridLayout columns="*, auto" className="mb-2">
+              <Label col={0} className="text-body">Quality Rating</Label>
+              <Label col={1} className="text-primary">{analyticsData.qualityRating}/5.0</Label>
+            </GridLayout>
+            <progressBar value={analyticsData.qualityRating} maxValue={5} className="bg-primary100" color={colors.primary} />
+          </StackLayout>
 
-          <stackLayout class="mb-4">
-            <gridLayout columns="*, auto" class="mb-2">
-              <label col="0" class="text-body">Response Time</label>
-              <label col="1" class="text-warning">85%</label>
-            </gridLayout>
-            <progressBar value={85} maxValue={100} class="bg-primary100" color={colors.warning} />
-          </stackLayout>
-        </stackLayout>
+          <StackLayout className="mb-4">
+            <GridLayout columns="*, auto" className="mb-2">
+              <Label col={0} className="text-body">Response Time</Label>
+              <Label col={1} className="text-warning">{analyticsData.responseTime}%</Label>
+            </GridLayout>
+            <progressBar value={analyticsData.responseTime} maxValue={100} className="bg-primary100" color={colors.warning} />
+          </StackLayout>
+        </StackLayout>
 
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Top Products</label>
-          
-          <stackLayout class="border-b border-divider p-2">
-            <gridLayout columns="*, auto" rows="auto, auto">
-              <label col="0" row="0" class="text-body font-bold">Wireless Earbuds</label>
-              <label col="1" row="0" class="text-body">$12,500</label>
-              <label col="0" row="1" class="text-body text-secondary">250 units</label>
-            </gridLayout>
-          </stackLayout>
-          
-          <stackLayout class="border-b border-divider p-2">
-            <gridLayout columns="*, auto" rows="auto, auto">
-              <label col="0" row="0" class="text-body font-bold">Smart Watches</label>
-              <label col="1" row="0" class="text-body">$10,000</label>
-              <label col="0" row="1" class="text-body text-secondary">100 units</label>
-            </gridLayout>
-          </stackLayout>
-          
-          <stackLayout class="p-2">
-            <gridLayout columns="*, auto" rows="auto, auto">
-              <label col="0" row="0" class="text-body font-bold">Bluetooth Speakers</label>
-              <label col="1" row="0" class="text-body">$8,000</label>
-              <label col="0" row="1" class="text-body text-secondary">100 units</label>
-            </gridLayout>
-          </stackLayout>
-        </stackLayout>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Top Products</Label>
+          {analyticsData.topProducts.map((prod, i) => (
+            <StackLayout key={i} className={`p-2 ${i < analyticsData.topProducts.length - 1 ? 'border-b border-divider' : ''}`}>
+              <GridLayout columns="*, auto" rows="auto, auto">
+                <Label col={0} row={0} className="text-body font-bold">{prod.name}</Label>
+                <Label col={1} row={0} className="text-body">${prod.totalValue}</Label>
+                <Label col={0} row={1} className="text-body text-secondary">{prod.units} units</Label>
+              </GridLayout>
+            </StackLayout>
+          ))}
+        </StackLayout>
 
-        <stackLayout class="card mt-4">
-          <label class="text-subtitle mb-2">Issues & Returns</label>
-          <gridLayout columns="*, *" rows="auto, auto" class="text-center">
-            <stackLayout col="0" row="0" class="p-2">
-              <label class="text-title text-warning">3</label>
-              <label class="text-body">Quality Issues</label>
-            </stackLayout>
-            <stackLayout col="1" row="0" class="p-2">
-              <label class="text-title text-error">2</label>
-              <label class="text-body">Late Deliveries</label>
-            </stackLayout>
-            <stackLayout col="0" row="1" class="p-2">
-              <label class="text-title">1.2%</label>
-              <label class="text-body">Return Rate</label>
-            </stackLayout>
-            <stackLayout col="1" row="1" class="p-2">
-              <label class="text-title">$520</label>
-              <label class="text-body">Return Value</label>
-            </stackLayout>
-          </gridLayout>
-        </stackLayout>
-      </stackLayout>
-    </scrollView>
+        <StackLayout className="card mt-4">
+          <Label className="text-subtitle mb-2">Issues & Returns</Label>
+          <GridLayout columns="*, *" rows="auto, auto" className="text-center">
+            <StackLayout col={0} row={0} className="p-2">
+              <Label className="text-title text-warning">{analyticsData.issues.quality}</Label>
+              <Label className="text-body">Quality Issues</Label>
+            </StackLayout>
+            <StackLayout col={1} row={0} className="p-2">
+              <Label className="text-title text-error">{analyticsData.issues.lateDeliveries}</Label>
+              <Label className="text-body">Late Deliveries</Label>
+            </StackLayout>
+            <StackLayout col={0} row={1} className="p-2">
+              <Label className="text-title">{analyticsData.issues.returnRate}%</Label>
+              <Label className="text-body">Return Rate</Label>
+            </StackLayout>
+            <StackLayout col={1} row={1} className="p-2">
+              <Label className="text-title">${analyticsData.issues.returnValue}</Label>
+              <Label className="text-body">Return Value</Label>
+            </StackLayout>
+          </GridLayout>
+        </StackLayout>
+      </StackLayout>
+    </ScrollView>
   );
 }
+
+export default SupplierAnalyticsScreen;

@@ -23,7 +23,7 @@ export function LoadingIndicator({ size = 'medium', text, fullscreen = false }: 
         class={getSize()} 
         color={colors.primary} 
       />
-      {text && <label class="text-body mt-2 text-center">{text}</label>}
+      {text && <label className="text-body mt-2 text-center">{text}</label>}
     </stackLayout>
   );
 
